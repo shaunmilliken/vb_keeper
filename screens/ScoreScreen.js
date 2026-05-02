@@ -114,7 +114,7 @@ export default function ScoreScreen({ navigation, route }) {
       teamB: teamBName,
       sets: setScores,
       setsWon,
-      winner: winner === 'draw' ? '' : winner,
+      winner,
     };
     const raw = await AsyncStorage.getItem(MATCH_HISTORY_KEY);
     const history = raw ? JSON.parse(raw) : [];

@@ -4,7 +4,7 @@
     "slug": "vb_keeper",
     "version": "1.0.0",
     "orientation": "default",
-    "icon": "./assets/icon.png",
+    "icon": "./assets/vb_keeper_icon.png",
     "userInterfaceStyle": "light",
     "splash": {
       "image": "./assets/splash-icon.png",
@@ -16,7 +16,7 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
+        "foregroundImage": "./assets/vb_keeper_icon.png",
         "backgroundColor": "#ffffff"
       },
       "package": "com.shaunmilliken.vb_keeper"

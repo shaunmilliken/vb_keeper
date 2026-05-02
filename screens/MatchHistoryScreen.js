@@ -53,7 +53,9 @@ export default function MatchHistoryScreen() {
                 </View>
               </View>
               <Text style={styles.sets}>{formatSets(match.sets)}</Text>
-              {match.winner ? (
+              {match.winner === 'draw' ? (
+                <Text style={styles.draw}>Draw</Text>
+              ) : match.winner ? (
                 <Text style={styles.winner}>{match.winner} won</Text>
               ) : (
                 <Text style={styles.incomplete}>Match incomplete</Text>
@@ -141,6 +143,11 @@ const styles = StyleSheet.create({
   },
   winner: {
     color: '#f0c040',
+    fontSize: 13,
+    fontWeight: '600',
+  },
+  draw: {
+    color: '#a0a0c0',
     fontSize: 13,
     fontWeight: '600',
   },
