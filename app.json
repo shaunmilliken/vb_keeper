@@ -3,7 +3,7 @@
     "name": "vb_keeper",
     "slug": "vb_keeper",
     "version": "1.0.0",
-    "orientation": "portrait",
+    "orientation": "default",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
     "newArchEnabled": true,
@@ -20,7 +20,8 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "edgeToEdgeEnabled": true
+      "edgeToEdgeEnabled": true,
+      "package": "com.shaunmilliken.vb_keeper"
     },
     "web": {
       "favicon": "./assets/favicon.png"

@@ -1,6 +1,8 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { Modal, StyleSheet, Text, View, TouchableOpacity } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useFocusEffect } from '@react-navigation/native';
+import * as ScreenOrientation from 'expo-screen-orientation';
 import { DEFAULTS } from './SettingsScreen';
 
 export const MATCH_HISTORY_KEY = 'matchHistory';
@@ -22,6 +24,15 @@ export default function ScoreScreen({ navigation, route }) {
   const startScore = params.startScore ?? DEFAULTS.startScore;
 
   const blankSet = () => ({ a: startScore, b: startScore });
+
+  useFocusEffect(
+    useCallback(() => {
+      ScreenOrientation.unlockAsync();
+      return () => {
+        ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.PORTRAIT_UP);
+      };
+    }, [])
+  );
 
   useEffect(() => {
     return navigation.addListener('beforeRemove', (e) => {
