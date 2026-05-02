@@ -512,10 +512,10 @@ const landscape = StyleSheet.create({
     gap: 16,
   },
   score: {
-    fontSize: 80,
+    fontSize: 160,
     fontWeight: 'bold',
-    lineHeight: 88,
-    minWidth: 80,
+    lineHeight: 176,
+    minWidth: 160,
     textAlign: 'center',
   },
   btnPlus: {
