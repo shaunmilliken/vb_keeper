@@ -20,7 +20,9 @@ export default function ScoreScreen({ navigation, route }) {
   const params = route.params ?? {};
   const teamAName  = params.teamAName  ?? DEFAULTS.teamAName;
   const teamBName  = params.teamBName  ?? DEFAULTS.teamBName;
-  const setsToWin  = Math.ceil((params.numSets ?? DEFAULTS.numSets) / 2);
+  const numSets    = params.numSets    ?? DEFAULTS.numSets;
+  const isTwoSetMatch = numSets === 2;
+  const setsToWin  = isTwoSetMatch ? null : Math.ceil(numSets / 2);
   const startScore = params.startScore ?? DEFAULTS.startScore;
 
   const { width, height } = useWindowDimensions();
@@ -54,8 +56,8 @@ export default function ScoreScreen({ navigation, route }) {
   const [showSaveDialog, setShowSaveDialog] = useState(false);
 
   const currentSet = setScores.length - 1;
-  const maxSets = setsToWin * 2 - 1;
-  const isFinalSet = currentSet === maxSets - 1;
+  const maxSets = isTwoSetMatch ? 2 : (setsToWin * 2 - 1);
+  const isFinalSet = !isTwoSetMatch && currentSet === maxSets - 1;
   const currentScore = setScores[currentSet];
 
   function addPoint(team) {
@@ -71,7 +73,17 @@ export default function ScoreScreen({ navigation, route }) {
       const newSetsWon = { ...setsWon, [winningTeam]: setsWon[winningTeam] + 1 };
       setSetsWon(newSetsWon);
 
-      if (newSetsWon[winningTeam] === setsToWin) {
+      if (isTwoSetMatch) {
+        if (updated.length === 2) {
+          setSetScores(updated);
+          setMatchOver(true);
+          if (newSetsWon.a > newSetsWon.b) setWinner(teamAName);
+          else if (newSetsWon.b > newSetsWon.a) setWinner(teamBName);
+          else setWinner('draw');
+        } else {
+          setSetScores([...updated, blankSet()]);
+        }
+      } else if (newSetsWon[winningTeam] === setsToWin) {
         setSetScores(updated);
         setMatchOver(true);
         setWinner(winningTeam === 'a' ? teamAName : teamBName);
@@ -102,7 +114,7 @@ export default function ScoreScreen({ navigation, route }) {
       teamB: teamBName,
       sets: setScores,
       setsWon,
-      winner,
+      winner: winner === 'draw' ? '' : winner,
     };
     const raw = await AsyncStorage.getItem(MATCH_HISTORY_KEY);
     const history = raw ? JSON.parse(raw) : [];
@@ -149,7 +161,9 @@ export default function ScoreScreen({ navigation, route }) {
           </Text>
           {matchOver && (
             <View style={landscape.winnerBanner}>
-              <Text style={landscape.winnerText}>{winner} wins!</Text>
+              <Text style={landscape.winnerText}>
+                {winner === 'draw' ? 'Match ends in a draw!' : `${winner} wins!`}
+              </Text>
             </View>
           )}
         </View>
@@ -221,7 +235,9 @@ export default function ScoreScreen({ navigation, route }) {
 
       {matchOver && (
         <View style={portrait.winnerBanner}>
-          <Text style={portrait.winnerText}>{winner} wins the match!</Text>
+          <Text style={portrait.winnerText}>
+            {winner === 'draw' ? 'Match ends in a draw!' : `${winner} wins the match!`}
+          </Text>
         </View>
       )}
 
@@ -313,6 +329,10 @@ const portrait = StyleSheet.create({
     color: '#ffffff',
     fontSize: 24,
     fontWeight: '600',
+    lineHeight: 30,
+    height: 90,
+    textAlignVertical: 'top',
+    textAlign: 'center',
     marginBottom: 4,
   },
   setsWon: {
@@ -475,6 +495,10 @@ const landscape = StyleSheet.create({
   teamName: {
     fontSize: 20,
     fontWeight: '600',
+    lineHeight: 26,
+    height: 78,
+    textAlignVertical: 'top',
+    textAlign: 'center',
     marginBottom: 2,
   },
   setsWon: {
