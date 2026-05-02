@@ -26,6 +26,9 @@
     "web": {
       "favicon": "./assets/favicon.png"
     },
+    "plugins": [
+      "expo-screen-orientation"
+    ],
     "extra": {
       "eas": {
         "projectId": "c79bf2da-9a51-432b-afe1-496c09c13c69"
