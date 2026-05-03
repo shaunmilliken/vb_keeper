@@ -154,50 +154,55 @@ export default function ScoreScreen({ navigation, route }) {
   if (isLandscape) {
     return (
       <View style={landscape.container}>
-        {/* Top bar: set label and winner banner */}
-        <View style={landscape.topBar}>
-          <Text style={landscape.setLabel}>
-            Set {currentSet + 1}{isFinalSet ? ' (Final)' : ''}
-          </Text>
-          {matchOver && (
-            <View style={landscape.winnerBanner}>
-              <Text style={landscape.winnerText}>
-                {winner === 'draw' ? 'Match ends in a draw!' : `${winner} wins!`}
-              </Text>
-            </View>
-          )}
-        </View>
-
         <View style={landscape.mainRow}>
-          {/* Team A */}
-          <View style={landscape.teamSection}>
-            <Text style={[landscape.teamName, { color: '#4caf50' }]}>{teamAName}</Text>
-            <Text style={landscape.setsWon}>Sets: {setsWon.a}</Text>
-            <View style={landscape.scoreRow}>
-              <TouchableOpacity style={landscape.btnMinus} onPress={() => removePoint('a')}>
-                <Text style={landscape.btnMinusText}>−</Text>
-              </TouchableOpacity>
-              <Text style={[landscape.score, { color: '#4caf50' }]}>{currentScore.a}</Text>
-              <TouchableOpacity style={landscape.btnPlus} onPress={() => addPoint('a')}>
-                <Text style={landscape.btnPlusText}>+</Text>
-              </TouchableOpacity>
+
+          {/* Left area: set label + two team columns */}
+          <View style={landscape.leftArea}>
+            <View style={landscape.topBar}>
+              <Text style={landscape.setLabel}>
+                Set {currentSet + 1}{isFinalSet ? ' (Final)' : ''}
+              </Text>
+              {matchOver && (
+                <View style={landscape.winnerBanner}>
+                  <Text style={landscape.winnerText}>
+                    {winner === 'draw' ? 'Match ends in a draw!' : `${winner} wins!`}
+                  </Text>
+                </View>
+              )}
             </View>
-          </View>
 
-          <View style={landscape.divider} />
+            <View style={landscape.teamsRow}>
+              {/* Team A */}
+              <View style={landscape.teamSection}>
+                <Text style={[landscape.teamName, { color: '#4caf50' }]}>{teamAName}</Text>
+                <Text style={landscape.setsWon}>Sets: {setsWon.a}</Text>
+                <View style={landscape.scoreRow}>
+                  <TouchableOpacity style={landscape.btnMinus} onPress={() => removePoint('a')}>
+                    <Text style={landscape.btnMinusText}>−</Text>
+                  </TouchableOpacity>
+                  <Text style={[landscape.score, { color: '#4caf50' }]}>{currentScore.a}</Text>
+                  <TouchableOpacity style={landscape.btnPlus} onPress={() => addPoint('a')}>
+                    <Text style={landscape.btnPlusText}>+</Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
 
-          {/* Team B */}
-          <View style={landscape.teamSection}>
-            <Text style={[landscape.teamName, { color: '#ef5350' }]}>{teamBName}</Text>
-            <Text style={landscape.setsWon}>Sets: {setsWon.b}</Text>
-            <View style={landscape.scoreRow}>
-              <TouchableOpacity style={landscape.btnMinus} onPress={() => removePoint('b')}>
-                <Text style={landscape.btnMinusText}>−</Text>
-              </TouchableOpacity>
-              <Text style={[landscape.score, { color: '#ef5350' }]}>{currentScore.b}</Text>
-              <TouchableOpacity style={landscape.btnPlus} onPress={() => addPoint('b')}>
-                <Text style={landscape.btnPlusText}>+</Text>
-              </TouchableOpacity>
+              <View style={landscape.divider} />
+
+              {/* Team B */}
+              <View style={landscape.teamSection}>
+                <Text style={[landscape.teamName, { color: '#ef5350' }]}>{teamBName}</Text>
+                <Text style={landscape.setsWon}>Sets: {setsWon.b}</Text>
+                <View style={landscape.scoreRow}>
+                  <TouchableOpacity style={landscape.btnMinus} onPress={() => removePoint('b')}>
+                    <Text style={landscape.btnMinusText}>−</Text>
+                  </TouchableOpacity>
+                  <Text style={[landscape.score, { color: '#ef5350' }]}>{currentScore.b}</Text>
+                  <TouchableOpacity style={landscape.btnPlus} onPress={() => addPoint('b')}>
+                    <Text style={landscape.btnPlusText}>+</Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
             </View>
           </View>
 
@@ -220,8 +225,8 @@ export default function ScoreScreen({ navigation, route }) {
               <Text style={landscape.doneBtnText}>Done</Text>
             </TouchableOpacity>
           </View>
-        </View>
 
+        </View>
         {saveDialog}
       </View>
     );
@@ -460,13 +465,6 @@ const landscape = StyleSheet.create({
     paddingTop: 8,
     paddingBottom: 8,
   },
-  topBar: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: 16,
-    marginBottom: 8,
-  },
   setLabel: {
     color: '#a0a0c0',
     fontSize: 14,
@@ -483,6 +481,22 @@ const landscape = StyleSheet.create({
     color: '#1a1a2e',
   },
   mainRow: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'stretch',
+  },
+  leftArea: {
+    flex: 1,
+    flexDirection: 'column',
+  },
+  topBar: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 16,
+    paddingVertical: 6,
+  },
+  teamsRow: {
     flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
