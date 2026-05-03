@@ -8,6 +8,7 @@ import MatchHistoryScreen from './screens/MatchHistoryScreen';
 import MatchSettingsScreen from './screens/MatchSettingsScreen';
 import ArchiveListScreen from './screens/ArchiveListScreen';
 import ViewArchiveScreen from './screens/ViewArchiveScreen';
+import AboutScreen from './screens/AboutScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -29,6 +30,7 @@ export default function App() {
         <Stack.Screen name="MatchHistory" component={MatchHistoryScreen} options={{ title: 'Match History' }} />
         <Stack.Screen name="ArchiveList" component={ArchiveListScreen} options={{ title: 'Archives' }} />
         <Stack.Screen name="ViewArchive" component={ViewArchiveScreen} options={({ route }) => ({ title: route.params.name ?? 'Archive' })} />
+        <Stack.Screen name="About" component={AboutScreen} options={{ title: 'About' }} />
       </Stack.Navigator>
     </NavigationContainer>
   );

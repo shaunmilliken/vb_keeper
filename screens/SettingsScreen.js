@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react';
-import { Modal, StyleSheet, Text, View, TouchableOpacity, TextInput } from 'react-native';
+import { Modal, StyleSheet, Text, View, ScrollView, TouchableOpacity, TextInput } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { MATCH_HISTORY_KEY } from './ScoreScreen';
+import { ARCHIVE_KEY } from './MatchHistoryScreen';
 
 export const SETTINGS_KEYS = {
   teamAName: 'settings.teamAName',
@@ -64,13 +65,14 @@ const selectorStyles = StyleSheet.create({
   },
 });
 
-export default function SettingsScreen() {
+export default function SettingsScreen({ navigation }) {
   const [teamAName, setTeamAName] = useState('');
   const [teamBName, setTeamBName] = useState('');
   const [numSets, setNumSets] = useState(DEFAULTS.numSets);
   const [startScore, setStartScore] = useState(DEFAULTS.startScore);
   const [saved, setSaved] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [showDeleteArchivesModal, setShowDeleteArchivesModal] = useState(false);
 
   useEffect(() => {
     async function load() {
@@ -91,6 +93,11 @@ export default function SettingsScreen() {
     setShowDeleteModal(false);
   }
 
+  async function deleteArchives() {
+    await AsyncStorage.removeItem(ARCHIVE_KEY);
+    setShowDeleteArchivesModal(false);
+  }
+
   async function saveSettings() {
     await AsyncStorage.setItem(SETTINGS_KEYS.teamAName,  teamAName.trim() || DEFAULTS.teamAName);
     await AsyncStorage.setItem(SETTINGS_KEYS.teamBName,  teamBName.trim() || DEFAULTS.teamBName);
@@ -101,7 +108,7 @@ export default function SettingsScreen() {
   }
 
   return (
-    <View style={styles.container}>
+    <ScrollView style={styles.container} contentContainerStyle={styles.content}>
       <Text style={styles.sectionTitle}>Team Names</Text>
 
       <Text style={styles.label}>Team A Default Name</Text>
@@ -152,6 +159,33 @@ export default function SettingsScreen() {
         <Text style={styles.deleteBtnText}>Delete Match History</Text>
       </TouchableOpacity>
 
+      <TouchableOpacity style={[styles.deleteBtn, styles.deleteBtnSpaced]} onPress={() => setShowDeleteArchivesModal(true)}>
+        <Text style={styles.deleteBtnText}>Delete All Archives</Text>
+      </TouchableOpacity>
+
+      <Modal transparent animationType="fade" visible={showDeleteArchivesModal}>
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalBox}>
+            <Text style={styles.modalTitle}>Delete All Archives?</Text>
+            <Text style={styles.modalMessage}>This will permanently delete all archived seasons. This cannot be undone.</Text>
+            <View style={styles.modalButtons}>
+              <TouchableOpacity
+                style={[styles.modalBtn, styles.modalBtnNo]}
+                onPress={() => setShowDeleteArchivesModal(false)}
+              >
+                <Text style={styles.modalBtnTextNo}>No</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[styles.modalBtn, styles.modalBtnYes]}
+                onPress={deleteArchives}
+              >
+                <Text style={styles.modalBtnTextYes}>Yes</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
+
       <Modal transparent animationType="fade" visible={showDeleteModal}>
         <View style={styles.modalOverlay}>
           <View style={styles.modalBox}>
@@ -174,7 +208,13 @@ export default function SettingsScreen() {
           </View>
         </View>
       </Modal>
-    </View>
+
+      <View style={styles.divider} />
+
+      <TouchableOpacity style={styles.aboutBtn} onPress={() => navigation.navigate('About')}>
+        <Text style={styles.aboutBtnText}>About</Text>
+      </TouchableOpacity>
+    </ScrollView>
   );
 }
 
@@ -182,8 +222,11 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#1a1a2e',
+  },
+  content: {
     paddingHorizontal: 32,
     paddingTop: 32,
+    paddingBottom: 40,
   },
   divider: {
     height: 1,
@@ -233,6 +276,9 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     paddingVertical: 14,
     alignItems: 'center',
+  },
+  deleteBtnSpaced: {
+    marginTop: 12,
   },
   deleteBtnText: {
     color: '#c04040',
@@ -284,6 +330,20 @@ const styles = StyleSheet.create({
   },
   modalBtnTextYes: {
     color: '#ffffff',
+    fontSize: 16,
+    fontWeight: '600',
+  },
+  aboutBtn: {
+    backgroundColor: '#16213e',
+    borderColor: '#333355',
+    borderWidth: 1,
+    borderRadius: 12,
+    paddingVertical: 14,
+    alignItems: 'center',
+    marginBottom: 32,
+  },
+  aboutBtnText: {
+    color: '#a0a0c0',
     fontSize: 16,
     fontWeight: '600',
   },
