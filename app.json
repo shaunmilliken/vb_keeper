@@ -1,13 +1,13 @@
 {
   "expo": {
-    "name": "vb_keeper",
+    "name": "VB Keeper",
     "slug": "vb_keeper",
     "version": "1.0.0",
     "orientation": "default",
     "icon": "./assets/vb_keeper_icon.png",
     "userInterfaceStyle": "light",
     "splash": {
-      "image": "./assets/splash-icon.png",
+      "image": "./assets/vb_keeper_icon.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
@@ -22,7 +22,7 @@
       "package": "com.shaunmilliken.vb_keeper"
     },
     "web": {
-      "favicon": "./assets/favicon.png"
+      "favicon": "./assets/vb_keeper_icon.png"
     },
     "extra": {
       "eas": {
