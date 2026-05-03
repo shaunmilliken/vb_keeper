@@ -1,8 +1,10 @@
 import { useEffect, useState } from 'react';
-import { Modal, StyleSheet, Text, View, ScrollView, TouchableOpacity } from 'react-native';
+import { Modal, StyleSheet, Text, View, ScrollView, TouchableOpacity, TextInput } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { MATCH_HISTORY_KEY } from './ScoreScreen';
+
+export const ARCHIVE_KEY = 'archives';
 
 function formatDate(isoString) {
   const d = new Date(isoString);
@@ -16,6 +18,8 @@ function formatSets(sets) {
 export default function MatchHistoryScreen() {
   const [history, setHistory] = useState([]);
   const [pendingDeleteId, setPendingDeleteId] = useState(null);
+  const [showArchiveModal, setShowArchiveModal] = useState(false);
+  const [archiveName, setArchiveName] = useState('');
 
   useEffect(() => {
     async function load() {
@@ -32,12 +36,30 @@ export default function MatchHistoryScreen() {
     setPendingDeleteId(null);
   }
 
+  async function saveArchive() {
+    const name = archiveName.trim() || 'Unnamed Season';
+    const archive = {
+      id: Date.now(),
+      name,
+      date: new Date().toISOString(),
+      matches: history,
+    };
+    const raw = await AsyncStorage.getItem(ARCHIVE_KEY);
+    const archives = raw ? JSON.parse(raw) : [];
+    archives.unshift(archive);
+    await AsyncStorage.setItem(ARCHIVE_KEY, JSON.stringify(archives));
+    await AsyncStorage.removeItem(MATCH_HISTORY_KEY);
+    setHistory([]);
+    setArchiveName('');
+    setShowArchiveModal(false);
+  }
+
   return (
     <View style={styles.container}>
       {history.length === 0 ? (
         <Text style={styles.empty}>No matches saved yet.</Text>
       ) : (
-        <ScrollView style={styles.list}>
+        <ScrollView style={styles.list} contentContainerStyle={styles.listContent}>
           {history.map((match) => (
             <View key={match.id} style={styles.card}>
               <View style={styles.cardHeader}>
@@ -65,6 +87,14 @@ export default function MatchHistoryScreen() {
         </ScrollView>
       )}
 
+      {history.length > 0 && (
+        <TouchableOpacity style={styles.archiveBtn} onPress={() => setShowArchiveModal(true)}>
+          <Ionicons name="archive-outline" size={18} color="#a0a0c0" style={styles.archiveBtnIcon} />
+          <Text style={styles.archiveBtnText}>Archive Season</Text>
+        </TouchableOpacity>
+      )}
+
+      {/* Delete confirmation modal */}
       <Modal transparent animationType="fade" visible={pendingDeleteId !== null}>
         <View style={styles.modalOverlay}>
           <View style={styles.modalBox}>
@@ -82,6 +112,41 @@ export default function MatchHistoryScreen() {
                 onPress={confirmDelete}
               >
                 <Text style={styles.modalBtnTextYes}>Yes</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
+
+      {/* Archive season modal */}
+      <Modal transparent animationType="fade" visible={showArchiveModal}>
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalBox}>
+            <Text style={styles.modalTitle}>Archive Season</Text>
+            <Text style={styles.modalMessage}>
+              Give this season a name. All current matches will be moved to the archive.
+            </Text>
+            <TextInput
+              style={styles.archiveInput}
+              value={archiveName}
+              onChangeText={setArchiveName}
+              placeholder="e.g. Spring 2026"
+              placeholderTextColor="#555577"
+              maxLength={40}
+              autoFocus
+            />
+            <View style={styles.modalButtons}>
+              <TouchableOpacity
+                style={[styles.modalBtn, styles.modalBtnNo]}
+                onPress={() => { setShowArchiveModal(false); setArchiveName(''); }}
+              >
+                <Text style={styles.modalBtnTextNo}>Cancel</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[styles.modalBtn, styles.modalBtnSave]}
+                onPress={saveArchive}
+              >
+                <Text style={styles.modalBtnTextSave}>Save</Text>
               </TouchableOpacity>
             </View>
           </View>
@@ -105,6 +170,9 @@ const styles = StyleSheet.create({
   },
   list: {
     paddingHorizontal: 20,
+  },
+  listContent: {
+    paddingBottom: 8,
   },
   card: {
     backgroundColor: '#16213e',
@@ -156,6 +224,37 @@ const styles = StyleSheet.create({
     fontSize: 13,
     fontStyle: 'italic',
   },
+  archiveBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#16213e',
+    borderColor: '#333355',
+    borderWidth: 1,
+    borderRadius: 10,
+    marginHorizontal: 20,
+    marginVertical: 16,
+    paddingVertical: 14,
+  },
+  archiveBtnIcon: {
+    marginRight: 8,
+  },
+  archiveBtnText: {
+    color: '#a0a0c0',
+    fontSize: 16,
+    fontWeight: '600',
+  },
+  archiveInput: {
+    backgroundColor: '#0d1626',
+    borderColor: '#333355',
+    borderWidth: 1,
+    borderRadius: 8,
+    color: '#ffffff',
+    fontSize: 16,
+    paddingHorizontal: 14,
+    paddingVertical: 10,
+    marginBottom: 20,
+  },
   modalOverlay: {
     flex: 1,
     backgroundColor: 'rgba(0,0,0,0.6)',
@@ -177,7 +276,7 @@ const styles = StyleSheet.create({
   modalMessage: {
     color: '#a0a0c0',
     fontSize: 15,
-    marginBottom: 24,
+    marginBottom: 20,
   },
   modalButtons: {
     flexDirection: 'row',
@@ -195,11 +294,19 @@ const styles = StyleSheet.create({
   modalBtnYes: {
     backgroundColor: '#c04040',
   },
+  modalBtnSave: {
+    backgroundColor: '#4a90d9',
+  },
   modalBtnTextNo: {
     color: '#a0a0c0',
     fontSize: 16,
   },
   modalBtnTextYes: {
+    color: '#ffffff',
+    fontSize: 16,
+    fontWeight: '600',
+  },
+  modalBtnTextSave: {
     color: '#ffffff',
     fontSize: 16,
     fontWeight: '600',

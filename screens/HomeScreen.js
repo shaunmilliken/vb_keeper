@@ -22,6 +22,13 @@ export default function HomeScreen({ navigation }) {
 
       <TouchableOpacity
         style={styles.secondaryBtn}
+        onPress={() => navigation.navigate('ArchiveList')}
+      >
+        <Text style={styles.secondaryBtnText}>View Archives</Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity
+        style={styles.secondaryBtn}
         onPress={() => navigation.navigate('Settings')}
       >
         <Text style={styles.secondaryBtnText}>Settings</Text>
