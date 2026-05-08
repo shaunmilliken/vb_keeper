@@ -13,7 +13,7 @@ There are no tests or linter configured in this project.
 
 ## Architecture
 
-This is an **Expo (React Native)** app targeting iOS, with web preview support via `npx expo start --web`.
+This is an **Expo (React Native)** app targeting iOS and Android, with web preview support via `npx expo start --web`.
 
 ### Navigation
 
